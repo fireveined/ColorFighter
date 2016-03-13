@@ -43,7 +43,7 @@ var SampleApp = function() {
         }
 
         //  Local cache for static content.
-        self.zcache['client/index.html'] = fs.readFileSync('index.html');
+        self.zcache['client/index.html'] = fs.readFileSync('client/index.html');
     };
 
 
