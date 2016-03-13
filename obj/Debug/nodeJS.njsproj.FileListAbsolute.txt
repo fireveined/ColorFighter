@@ -1,0 +1,2 @@
+X:\Gry\nodeJS\obj\Debug\nodeJS.njsprojResolveAssemblyReference.cache
+X:\Gry\nodeJS\bin\Microsoft.NodejsTools.WebRole.dll
