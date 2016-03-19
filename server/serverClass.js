@@ -1,5 +1,6 @@
 
 
+eval(fs.readFileSync('client/shared/const.js') + '');
 eval(fs.readFileSync('server/gameObject.js') + '');
 eval(fs.readFileSync('client/shared/map.js') + '');
 
@@ -11,8 +12,10 @@ serverClass = function () {
 	this.lastTime = new Date().getTime();
 	this.map = new CMap();
 	
-	this.timeLeft = 60;
-	this.numPlayers = 3;
+	this.timeLeft = 59;
+	this.matchTime = 59;
+	this.numPlayers = 5;
+
 }
 
 
@@ -21,17 +24,16 @@ serverClass.prototype.reset = function () {
 		this.objects[a].score = 0;
 
 	this.map.reset();
-	this.timeLeft = 59;
+	this.timeLeft = 65;
 	io.emit("reset", this.timeLeft);
 }
 
 
 serverClass.prototype.create = function () {
 	
-
 	this.map.serverCreate();
 	
-	var col = ["red", "blue", "green", "red", "red"];
+	var col = ["red", "blue", "green", "yellow", "white"];
 	
 	for (var a = 0; a < this.numPlayers; a++) {
 		this.objects.push(new gameObject(5 + a, 4, col[a] ,a));
@@ -46,12 +48,10 @@ serverClass.prototype.run = function () {
 	
 	this.map.serverCreate();
 	var self = this;
-	setInterval(servUpdate, 16);
+	setInterval(servUpdate, 25);
 	setInterval(this.sendState, 40);
-	
 	setInterval(function () { server.timeLeft--; }, 1000);
-
-	setInterval(this.addBonus, 3000);
+	setInterval(this.addBonus, 400);
 
 io.on('connection', function (socket) {
 	
@@ -99,6 +99,7 @@ io.on('connection', function (socket) {
 			player.aimY = msg[1];
 			player.angle = msg[2];
 			
+
 			player.checkField(msg[0], msg[1]);
 			socket.broadcast.emit('p', player.id + "+" + msgo);
 		});
@@ -110,9 +111,11 @@ serverClass.prototype.sendState = function () {
 	
 	var msg="";
 	for (var x = 0; x < server.map.fieldsX; x++)
-		for (var y = 0; y < server.map.fieldsY; y++)
-			msg += server.map.fields[x][y].color + server.map.fields[x][y].bonus;
-
+		for (var y = 0; y < server.map.fieldsY; y++) {
+			msg += server.map.fields[x][y].color;
+			if (server.map.fields[x][y].bonus == BONUS_AI) msg += '0';
+			else msg += server.map.fields[x][y].bonus;
+		}
 	io.emit("state", msg);
 //	console.log(msg);
 }
@@ -120,18 +123,25 @@ serverClass.prototype.sendState = function () {
 
 serverClass.prototype.addBonus = function () {
 	
+	if (this.timeLeft > this.matchTime) return; 
 	var msg = "";
 	var x = Math.floor((Math.random() * server.map.fieldsX));
 	var y = Math.floor((Math.random() * server.map.fieldsY));
+	
+	var bonus = BONUS_AI;
+	var rand = Math.random();
+	
 
-	server.map.fields[x][y].bonus = BONUS_SCORE;
-	msg += x + "+" + y + "+" + BONUS_SCORE;
-	io.emit("bonus", msg);
+	if (rand > 0.2) bonus = BONUS_SCORE;
+	if (rand > 0.6) bonus = BONUS_SPEED;
+
+	server.map.fields[x][y].bonus = bonus;
 //	console.log(msg);
 }
 
 
 serverClass.prototype.update = function () {
+	
 	
 	this.delta = (new Date().getTime() - this.lastTime) / 1000.0;
 	this.lastTime = new Date().getTime();
@@ -143,6 +153,10 @@ serverClass.prototype.update = function () {
 
 	}
 	
+	for (var x = 0; x < server.map.fieldsX; x++)
+		for (var y = 0; y < server.map.fieldsY; y++)
+			server.map.fields[x][y].claimed -= this.delta;
+
 	if (this.timeLeft == 0)
 		this.reset();
 }

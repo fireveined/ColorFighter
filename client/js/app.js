@@ -13,7 +13,9 @@ function shortToColor(s) {
 	if (s == "n") return 0;
 	if (s == "r") return RGBtoHEX(122, 0, 0);
 	if (s == "g") return RGBtoHEX(0, 122, 0);
-	if (s == "b") return RGBtoHEX(0, 0,122);
+	if (s == "b") return RGBtoHEX(0, 0, 122);
+	if (s == "y") return RGBtoHEX(120, 60, 0);
+	if (s == "w") return RGBtoHEX(70, 70, 70);
 }
 
 
@@ -40,7 +42,7 @@ function shortToColor(s) {
 	this.loaded = 0;
 
 	this.timeLeft = 59;
-
+	this.matchTime = 59;
 
 //this.manageInput = function () { console.log("ff");}
 }
@@ -51,8 +53,8 @@ function shortToColor(s) {
 
 gameClass.prototype.preload = function () {
 
-	phaser.load.spritesheet('bonus', 'data/gfx/bonus.png', 60, 60, 1);
-	phaser.load.spritesheet('ships', 'data/gfx/ships.png', 60, 60, 3);
+	phaser.load.spritesheet('bonus', 'data/gfx/bonus.png', 60, 60, 2);
+	phaser.load.spritesheet('ships', 'data/gfx/ships.png', 60, 60, 5);
 
 	phaser.load.image('field', 'data/gfx/field.png');
 

@@ -22,6 +22,11 @@ gameClass.prototype.create = function () {
 	this.keys["right"] = phaser.input.keyboard.addKey(Phaser.Keyboard.D);
 	this.keys["space"] = phaser.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	
+	
+	this.waitText = phaser.add.text(0,0, "GAME STARTS IN ", { fill: "yellow", fontSize: 50, boundsAlignH: "center", boundsAlignV: "middle" });
+	this.waitText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+	this.waitText.setTextBounds(0, 0, canvasWidth, canvasHeight);
+	this.waitText.visible = false;
 };
 
 

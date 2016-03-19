@@ -13,8 +13,9 @@ function gameObject(position, color) {
 	this.angle = 0;
 	this.nextAngle = 180;
 	this.pos = [new CState(parseInt(position.x), parseInt(position.y), this.nextAngle)];
-	this.speed = 250;
-	
+	this.speed = _playerSpeed;
+	this.bonusSpeed = 0;
+
 	if (color == "red") {
 		this.color = RGBtoHEX(125, 0, 0);
 		this.icon = 0;
@@ -30,7 +31,16 @@ function gameObject(position, color) {
 		this.icon = 1;
 	}
 	
+	if (color == "yellow") {
+		this.color = RGBtoHEX(180, 60, 0);
+		this.icon = 4;
+	}
 	
+	if (color == "white") {
+		this.color = RGBtoHEX(40, 40, 40);
+		this.icon = 3;
+	}
+
 	this.sprite = phaser.add.sprite(this.pos[0].x , this.pos[0].y, 'ships', this.icon );
 	this.sprite.anchor.x = 0.5;
 	this.sprite.anchor.y = 0.5;
@@ -45,6 +55,7 @@ function gameObject(position, color) {
 	this.score = 0;
 	
 	this.moving = 0;
+	
 	
 	
 	this.shortColor = color.substr(0, 1);
@@ -64,9 +75,26 @@ gameObject.prototype.shot = function (skill) {
 };
 
 
+gameObject.prototype.checkField = function (x, y) {
+	
+	var field = game.map.getField(x, y);
+	if (field.bonus == BONUS_SCORE) {
+		field.field.bonus = 0;
+		field.field.bonusSprite.destroy(true);
+		game.map.scoreFields(this.shortColor);
+	}
+	
+
+	
+
+if(game.timeLeft<game.matchTime)
+	field.setColor(this.shortColor);
+}
+
 gameObject.prototype.update = function () {
 	
-	
+
+
 	var posx = this.pos[0].x;
 	var posy = this.pos[0].y;
 	
@@ -77,27 +105,13 @@ gameObject.prototype.update = function () {
 	
 	var fsize = game.map.fieldSize;
 	
-	var odx2 = (this.sprite.position.x + fsize / 2) % fsize;
-	var ody2 = (this.sprite.position.y + fsize / 2) % fsize;
-	if ((odx2 < 6 || odx2 > 54) && (ody2 < 6 || ody2 > 54)) {
-
-	}
-	
-	var o = 5;
+	var o = 8;
+	if (this.ai) o = 19;
 	if (this.pos.length > 5) this.pos.splice(0, this.pos.length-5);
-	if (this.pos.length > 1) o = 13;
+	if (this.pos.length > 2) o = 19;
 	if (odx < o && ody < o) {
 		
-		var field = game.map.getField(posx - 15, posy - 15);
-		
-		if (field.field.bonus == 1) {
-			field.field.bonus = 0;
-			field.field.bonusSprite.destroy(true);
-			game.map.scoreFields(this.shortColor);
-		}
-		
-		field.setColor(this.shortColor);
-		
+		this.checkField(posx, posy);
 		
 		if (this.pos.length > 1)
 			this.pos.splice(0, 1);
@@ -111,7 +125,6 @@ gameObject.prototype.update = function () {
 			odx = Math.abs(sx - this.pos[0].x);
 			ody = Math.abs(sy - this.pos[0].y);
 			
-			console.log(this.pos[0].y);
 			if (this.player)
 				if (odx > 5 || ody > 5) {
 					var msg = this.pos[0].x + "+" + this.pos[0].y + "+" + this.pos[0].angle;
@@ -126,12 +139,17 @@ gameObject.prototype.update = function () {
 	}
 	
 	
-	var posx = this.pos[0].x;
-	var posy = this.pos[0].y;
+	posx = this.pos[0].x;
+	posy = this.pos[0].y;
 	
 	var speed = this.speed;
-	
-	if (this.pos.length > 1) speed *= 3;
+	if (this.ai) speed *= 1.2;
+	if (this.bonusSpeed > 0) {
+		speed += this.bonusSpeed;
+	// this.bonusSpeed -= _bonusSpeedScale*game.delta;
+	}
+
+	if (this.pos.length > 3) speed *= 3;
 	if (posy < this.sprite.position.y) { this.sprite.position.y -= speed * game.delta; }
 	if (posx > this.sprite.position.x) { this.sprite.position.x += speed * game.delta; }
 	if (posy > this.sprite.position.y) { this.sprite.position.y += speed * game.delta; }
@@ -143,6 +161,5 @@ gameObject.prototype.update = function () {
 
 
 gameObject.prototype.rotate = function (angle) {
-	
 	this.nextAngle = angle;
 };

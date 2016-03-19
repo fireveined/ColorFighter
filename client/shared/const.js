@@ -1,0 +1,5 @@
+var _bonusSpeedScale = 80;
+
+var _bonusSpeed = 200;
+var _aiBonusSpeed = 200;
+var _playerSpeed = 250;

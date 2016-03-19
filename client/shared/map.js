@@ -14,9 +14,15 @@ sField = function (x, y) {
 		this.bonus = a;
 		this.bonusSprite = 0;
 	}
-
+	this.claimed = 0;
+	this.claimedBy = -1;
 }
+
 var BONUS_SCORE = 1;
+var BONUS_SPEED = 2;
+var BONUS_AI = 3;
+
+
 CMap = function () {
 	
 	
