@@ -29,7 +29,7 @@ CMap = function () {
 	this.objects = [];
 
 	this.getField = function (x, y) {
-		return this.fields[Math.round(x / this.fieldSize)][Math.round(y / this.fieldSize)];
+		return this.fields[Math.floor(x / this.fieldSize)][Math.floor(y / this.fieldSize)];
 	}
 
 	

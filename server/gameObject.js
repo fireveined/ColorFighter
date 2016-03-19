@@ -15,8 +15,27 @@ gameObject = function (x, y, color, id) {
 	this.shortColor = color.substr(0, 1);
 	this.score = 0;
 	}
+
+
+
+gameObject.prototype.checkField = function (x, y) {
+
+	var field = server.map.getField(x,y);
+	if (field.bonus == 1) {
+		field.bonus = 0;
+		this.score += server.map.scoreFields(this.shortColor);
+
+		var msg = this.id + "+" + this.score;
+		io.emit("score", msg);
+
+	}
 	
-	
+	field.setColor(this.shortColor);
+
+}
+
+
+
 	gameObject.prototype.update = function () {
 
 	
@@ -26,18 +45,8 @@ gameObject = function (x, y, color, id) {
 	var ody = Math.abs(this.aimY - this.posY);
 	
 	if (odx < 14 && ody < 14) {
-
-		var field = server.map.getField(this.posX - 15, this.posY - 15);
-		if (field.bonus == 1) {
-			field.bonus = 0;
-			this.score += server.map.scoreFields(this.shortColor);
-
-			var msg = this.id + "+" + this.score;
-			io.emit("score", msg);
-
-		}
-		server.map.getField(this.posX - 15, this.posY - 15).color = this.shortColor;
-		field.setColor(this.shortColor);
+		
+		this.checkField(this.posX, this.posY);
 
 		this.angle = this.nextAngle;
 		if (this.angle == 0) { if (this.aimY - fsize > 0) this.aimY -= fsize;}

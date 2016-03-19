@@ -84,6 +84,7 @@ gameObject.prototype.update = function () {
 	}
 	
 	var o = 5;
+	if (this.pos.length > 5) this.pos.splice(0, this.pos.length-5);
 	if (this.pos.length > 1) o = 13;
 	if (odx < o && ody < o) {
 		

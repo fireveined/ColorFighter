@@ -47,7 +47,7 @@ serverClass.prototype.run = function () {
 	this.map.serverCreate();
 	var self = this;
 	setInterval(servUpdate, 16);
-	setInterval(this.sendState, 150);
+	setInterval(this.sendState, 40);
 	
 	setInterval(function () { server.timeLeft--; }, 1000);
 
@@ -98,11 +98,8 @@ io.on('connection', function (socket) {
 			player.aimX = msg[0];
 			player.aimY = msg[1];
 			player.angle = msg[2];
-			server.map.getField(msg[0] - 15, msg[1] - 15).color = player.shortColor;
-			setTimeout(function () {
-				server.map.getField(msg[0] - 15, msg[1] - 15).color = player.shortColor;
-			}, server.map.fieldSize / player.speed * 1000);
-
+			
+			player.checkField(msg[0], msg[1]);
 			socket.broadcast.emit('p', player.id + "+" + msgo);
 		});
 
