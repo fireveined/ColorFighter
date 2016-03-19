@@ -72,7 +72,7 @@ io.on('connection', function (socket) {
 				break;
 			}
 		
-			socket.broadcast.emit('new', "new");
+			socket.broadcast.emit('new', player.id+"+"+player.name);
 			var init = player.id + "+" + server.numPlayers + "+" + server.timeLeft + "+";
 			for (var a = 0; a < server.objects.length; a++) {
 				init += server.objects[a].aimX + "$";

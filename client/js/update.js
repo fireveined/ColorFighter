@@ -104,6 +104,13 @@ gameClass.prototype.handleNetwork = function (socket) {
 	
 	});
 	
+	socket.on('new', function (msg) {
+		if (!self.loaded) return;
+		msg = msg.split("+");
+		game.map.objects[msg[0]].name = msg[1];
+		self.avatars[msg[0]].name.setText(msg[1]);
+	});
+	
 
 	socket.on('score', function (msg) {
 		if (!self.loaded) return;

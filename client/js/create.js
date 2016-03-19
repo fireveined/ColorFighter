@@ -37,7 +37,7 @@ gameClass.prototype.addPlayer = function (x, y, color, name) {
 	this.avatars[a] = [];
 	this.avatars[a].avatar = phaser.add.image(hudX , 40 + 80 * a, this.map.objects[a].sprite.generateTexture());
 	this.avatars[a].score = phaser.add.text(hudX + 55, 40 + 80 * a + 20, "32", { fill: "yellow" });
-	this.avatars[a].name = phaser.add.text(hudX + 15, 40 + 80 * a + 65, name, { fill: "yellow", fontSize: 10 });
+	this.avatars[a].name = phaser.add.text(hudX + 15, 40 + 80 * a + 55, name, { fill: "yellow", fontSize: 17 });
 	
 }
 
