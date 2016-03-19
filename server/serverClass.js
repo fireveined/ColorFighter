@@ -20,12 +20,17 @@ serverClass = function () {
 
 
 serverClass.prototype.reset = function () {
+	
+	var best = 0;
 	for (var a = 0; a < this.numPlayers; a++)
+		if (this.objects[a].score > this.objects[best].score) best = a; 
+	for (var a = 0; a < this.numPlayers; a++) {
 		this.objects[a].score = 0;
-
+	}
 	this.map.reset();
 	this.timeLeft = 65;
-	io.emit("reset", this.timeLeft);
+	io.emit("reset", this.timeLeft + "+" + this.objects[best].name);
+	console.log(this.objects[best].name);
 }
 
 

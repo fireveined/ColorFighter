@@ -43,7 +43,7 @@ function shortToColor(s) {
 
 	this.timeLeft = 59;
 	this.matchTime = 59;
-
+	this.winner = "";
 //this.manageInput = function () { console.log("ff");}
 }
 

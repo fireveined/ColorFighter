@@ -22,7 +22,7 @@ gameClass.prototype.update = function () {
 	
 	if (this.timeLeft > this.matchTime) {
 		this.waitText.visible = 1;
-		this.waitText.setText("GAME STARTS IN "+ (this.timeLeft - this.matchTime) );
+		this.waitText.setText(this.winner.toUpperCase()+" WON. NEXT GAME STARTS IN "+ (this.timeLeft - this.matchTime) );
 	}
 	else
 		this.waitText.visible = 0;
@@ -127,8 +127,9 @@ gameClass.prototype.handleNetwork = function (socket) {
 
 	socket.on('reset', function (msg) {
 		if (!self.loaded) return;
-		game.timeLeft = parseInt(msg);;
-		
+		msg = msg.split("+");
+		game.timeLeft = parseInt(msg[0]);;
+		game.winner = msg[1];
 		for (var a = 0; a < self.numPlayers; a++) {
 			game.map.objects[a].score = 0;
 		}
