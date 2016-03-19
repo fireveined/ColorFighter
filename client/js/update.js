@@ -8,7 +8,7 @@ gameClass.prototype.update = function () {
 	this.delta = Math.min(this.delta, 0.1);
 	
 	this.delta = phaser.time.physicsElapsed;
-	phaser.debug.text('Delta: ' + this.delta, 20, 20, 'yellow');
+	phaser.debug.text('fps: ' + phaser.time.fps, 20, 20, 'yellow');
 
 	this.map.update();
 	

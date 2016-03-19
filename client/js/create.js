@@ -13,9 +13,7 @@ gameClass.prototype.create = function () {
 	phaser.physics.startSystem(Phaser.Physics.ARCADE);
 	
 	
-
-	
-	
+	phaser.time.advancedTiming = true;
 	
 
 	this.keys["up"] = phaser.input.keyboard.addKey(Phaser.Keyboard.W);
