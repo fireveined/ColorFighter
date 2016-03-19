@@ -2,44 +2,18 @@ var playerName;
 var playerNameInput = document.getElementById('playerNameInput');
 var socket;
 
-function RGBtoHEX(r,g, b) { return r << 16 | g << 8 | b; }
-
-var canvasHeight = 660;
-var canvasWidth = 1080;
-var hudX = 970;
 
 
-function shortToColor(s) {
-	if (s == "n") return 0;
-	if (s == "r") return RGBtoHEX(122, 0, 0);
-	if (s == "g") return RGBtoHEX(0, 122, 0);
-	if (s == "b") return RGBtoHEX(0, 0,122);
-}
 
 
 
   function gameClass() {
 	
 	var self = this;
-	
-	
-	
-	this.avatars = []
+
+	this.objects = [];
 	this.keys = [];
-	this.delta = 0;
 
-	this.map = new CMap();
-	
-	this.numPlayers = 5;
-	this.playerId = 0;
-
-	this.getPlayer = function() {
-		return this.map.objects[this.playerId];
-	}
-
-	this.loaded = 0;
-
-	this.timeLeft = 59;
 
 
 //this.manageInput = function () { console.log("ff");}
@@ -51,40 +25,48 @@ function shortToColor(s) {
 
 gameClass.prototype.preload = function () {
 
-	phaser.load.spritesheet('bonus', 'data/gfx/bonus.png', 60, 60, 1);
-	phaser.load.spritesheet('ships', 'data/gfx/ships.png', 60, 60, 3);
 
-	phaser.load.image('field', 'data/gfx/field.png');
+	phaser.load.spritesheet('legs', 'data/gfx/legs.png', 60, 50, 4);
+	phaser.load.spritesheet('body', 'data/gfx/body.png', 60, 40, 4);
+	phaser.load.spritesheet('faces', 'data/gfx/faces.png', 60, 50, 4);
 
-	phaser.load.image('grid', 'data/gfx/grid.png');
+	phaser.load.image('fireball', 'data/gfx/fireball.png');
 
+	phaser.load.image('background', 'data/gfx/background.png');
 
+	phaser.load.image('hp_bar', 'data/gfx/hp_bar.png');
 }
 
 
 
+gameClass.prototype.handleNetwork  = function () {
 
+		
+}
 
 //	var game = new Game();
 
 
 
-var game, phaser;
+
 
 
 function startGame() {
 	
 
-	game = new gameClass();
-	phaser = new Phaser.Game(canvasWidth, canvasHeight, Phaser.AUTO, 'gameAreaWrapper', game);
 
-  //  playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '');
+    playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '');
 	document.getElementById('startMenuWrapper').style.display = 'none';
 	document.getElementById('gameAreaWrapper').style.display = 'block';
 	socket = io();
-	socket.emit('join', playerNameInput.value);
+	socket.emit('chat message', playerNameInput.value);
     SetupSocket(socket);
-
+	
+	/*
+	var text = "- phaser -\n with a sprinkle of \n pixi dust.";
+	var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+	var t = phaser.add.text(phaser.world.centerX - 300, 0, text, style);
+	*/
 }
 
 // check if nick is valid alphanumeric characters (and underscores)
