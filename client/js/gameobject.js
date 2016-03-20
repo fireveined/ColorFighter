@@ -107,7 +107,7 @@ gameObject.prototype.update = function () {
 	var posy = this.pos[0].y;
 	
 	this.counter.position.x = this.sprite.position.x-5;
-	this.counter.position.y = this.sprite.position.y-10;
+	this.counter.position.y = this.sprite.position.y-14;
 
 	var sx = this.sprite.position.x;
 	var sy = this.sprite.position.y;
