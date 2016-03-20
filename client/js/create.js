@@ -4,6 +4,7 @@ gameClass.prototype.create = function () {
 
 	//phaser.add.image(0, 0, "background");
 	
+
 	this.map.create();
 
 		
@@ -27,17 +28,27 @@ gameClass.prototype.create = function () {
 	this.waitText.setShadow(5, 5, 'rgba(0,0,0,0.8)', 2);
 	this.waitText.setTextBounds(0, 0, canvasWidth-120, canvasHeight);
 	this.waitText.visible = false;
+	
+
+	this.created = 1;
+
 };
 
 
 gameClass.prototype.addPlayer = function (x, y, color, name) {
 	
 	var a = this.map.objects.length;
+
+	this.particles[a] = phaser.add.emitter(0, 0, 100);
+	this.particles[a].makeParticles('particle'+a);
+	console.log("p" + this.particles[a]);
 	this.map.objects.push(new gameObject(new Phaser.Point(x, y), color));
+	this.map.objects[a].id = a;
 	this.avatars[a] = [];
 	this.avatars[a].avatar = phaser.add.image(hudX , 40 + 80 * a, this.map.objects[a].sprite.generateTexture());
 	this.avatars[a].score = phaser.add.text(hudX + 55, 40 + 80 * a + 20, "32", { fill: "yellow" , fontSize: 28});
 	this.avatars[a].name = phaser.add.text(hudX + 15, 40 + 80 * a + 55, name, { fill: "yellow", fontSize: 17 });
 	
+
 }
 

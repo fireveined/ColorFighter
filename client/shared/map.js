@@ -2,9 +2,14 @@
 
 sField = function (x, y) {
 	
+	this.posX = x;
+	this.posY = y;
 	this.color="n";
 	this.bonus = 0;
 	this.bonusSprite = 0;
+
+	this.arrowDir = 0;
+	this.arrowTimer = 0;
 
 	this.setColor = function (col) {
 		this.color = col;
@@ -20,7 +25,9 @@ sField = function (x, y) {
 
 var BONUS_SCORE = 1;
 var BONUS_SPEED = 2;
-var BONUS_AI = 3;
+var BONUS_ARROW = 3;
+var BONUS_WIRUS = 4;
+var BONUS_AI = 5;
 
 
 CMap = function () {
@@ -38,20 +45,18 @@ CMap = function () {
 		return this.fields[Math.floor(x / this.fieldSize)][Math.floor(y / this.fieldSize)];
 	}
 
-	
-	this.scoreFields = function (col){
+
+
+	this.claimFields = function (col, col2) {
 		var count = 0;
-		for (var x = 0; x < this.fieldsX; x++) 
-			for (var y = 0; y < this.fieldsY; y++) 
+		for (var x = 0; x < this.fieldsX; x++)
+			for (var y = 0; y < this.fieldsY; y++)
 				if (this.fields[x][y].color == col) {
-					this.fields[x][y].setColor("n");
+					this.fields[x][y].setColor(col2);
 					count++;
 				}
 		return count;
 	}
-
-
-	
 
 	this.serverCreate = function () {
 		

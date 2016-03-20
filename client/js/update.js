@@ -21,6 +21,7 @@ gameClass.prototype.update = function () {
 	//hud
 	
 	if (this.timeLeft > this.matchTime) {
+		phaser.world.bringToTop(this.waitText);
 		this.waitText.visible = 1;
 		this.waitText.setText(this.winner.toUpperCase()+" WON. NEXT GAME STARTS IN "+ (this.timeLeft - this.matchTime) );
 	}
@@ -91,7 +92,7 @@ gameClass.prototype.handleNetwork = function (socket) {
 	
 
 	socket.on('state', function (msg) {
-		if (!self.loaded) return;	
+		if (!self.loaded || !self.created ) return;	
 		console.log(msg);
 		var i = 0;
 		msg = msg.split("");		
@@ -105,7 +106,7 @@ gameClass.prototype.handleNetwork = function (socket) {
 	});
 	
 	socket.on('new', function (msg) {
-		if (!self.loaded) return;
+		if (!self.loaded || !self.created) return;	
 		msg = msg.split("+");
 		game.map.objects[msg[0]].name = msg[1];
 		self.avatars[msg[0]].name.setText(msg[1]);
@@ -113,16 +114,28 @@ gameClass.prototype.handleNetwork = function (socket) {
 	
 
 	socket.on('score', function (msg) {
-		if (!self.loaded) return;
+		if (!self.loaded || !self.created) return;	
 		msg = msg.split("+");
 		game.map.objects[msg[0]].score=msg[1];
 	});
 
 	socket.on('bonus_s', function (msg) {
-		if (!self.loaded) return;
+		if (!self.loaded || !self.created) return;	
 		msg = msg.split("+");
 		game.map.objects[msg[0]].bonusSpeed = parseInt(msg[1]);
-		setTimeout(function () { game.map.objects[msg[0]].bonusSpeed = 0; }, 2000);
+		game.map.objects[msg[0]].bonusTimer = msg[2];
+	});
+	
+	socket.on('bonus_w', function (msg) {
+		if (!self.loaded || !self.created) return;	
+		msg = msg.split("+");
+		game.map.objects[msg[0]].wirusTimer = msg[1];
+		if (msg[1] <1) {
+			var x = (game.map.objects[msg[0]].sprite.position.x + game.map.objects[msg[2]].sprite.position.x) / 2;
+			var y = (game.map.objects[msg[0]].sprite.position.y + game.map.objects[msg[2]].sprite.position.y) / 2;
+			game.emitParticles(msg[0], x, y, RGBtoHEX(255, 255, 25), 70);
+		}
+		
 	});
 
 	socket.on('reset', function (msg) {

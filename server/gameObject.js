@@ -16,6 +16,9 @@ gameObject = function (x, y, color, id) {
 	this.score = 0;
 
 	this.bonusSpeed = 0;
+	this.bonusTimer = 0;
+	this.bonusWirus = 0;
+	this.dissTimer = 0;
 	}
 
 
@@ -24,18 +27,41 @@ gameObject.prototype.checkField = function (x, y) {
 
 	var field = server.map.getField(x,y);
 	if (field.bonus == BONUS_SCORE) {
-		this.score += server.map.scoreFields(this.shortColor);
+		this.score += server.map.claimFields(this.shortColor, "n");
 		var msg = this.id + "+" + this.score;
 		io.emit("score", msg);
 	}
 	
 	if (field.bonus == BONUS_SPEED) {
 		this.bonusSpeed = _bonusSpeed;
-	//	if (this.ai) this.bonusSpeed = _aiBonusSpeed;
-		var msg = this.id + "+" + this.bonusSpeed;
+		var msg = this.id + "+" + this.bonusSpeed + "+" + 2;
 		io.emit("bonus_s", msg);
 		var self = this;
-		setTimeout(function () { self.bonusSpeed = 0;},2000);
+		this.bonusTimer = 2;
+	}
+	
+	if (field.bonus == BONUS_WIRUS) {
+		
+		this.bonusSpeed = _bonusSpeed;
+		var msg = this.id + "+" + parseInt(this.bonusSpeed*0.6)+"+"+4;
+		io.emit("bonus_s", msg);
+		var self = this;
+		setTimeout(function () { self.bonusSpeed = 0; }, 4000);
+		this.bonusTimer = 4;
+
+		this.bonusWirus = _wirusTime;
+		msg = this.id+"+"+_wirusTime;
+		io.emit("bonus_w", msg);
+	}
+	
+
+	
+	if (field.bonus == BONUS_ARROW) {
+		
+		if (field.arrowDir == 0) for (var a = field.posY; a >= 0; a--) server.map.fields[field.posX][a].setColor(this.shortColor);
+		if (field.arrowDir == 2) for (var a = field.posY; a < server.map.fieldsY; a++) server.map.fields[field.posX][a].setColor(this.shortColor);
+		if (field.arrowDir == 3) for (var a = field.posX; a >= 0; a--) server.map.fields[a][field.posY].setColor(this.shortColor);
+		if (field.arrowDir == 1) for (var a = field.posX; a < server.map.fieldsX; a++) server.map.fields[a][field.posY].setColor(this.shortColor);
 	}
 
 	field.bonus = 0;
@@ -73,9 +99,21 @@ gameObject.prototype.serachForBonus = function () {
 }
 
 
-	gameObject.prototype.update = function () {
+gameObject.prototype.update = function () {
 
-	
+	this.bonusTimer -= server.delta;
+	this.bonusWirus -= server.delta;
+
+	if (this.bonusWirus>0) {
+		for (var a = 0; a < server.objects.length; a++) {
+			if (a != this.id && getDistance(server.objects[a].posX, server.objects[a].posY, this.posX, this.posY) < 60) {
+				server.map.claimFields(server.objects[a].shortColor, this.shortColor);
+				this.bonusWirus = 0;
+				io.emit("bonus_w", this.id+"+"+0+"+"+a);
+			}
+		}
+	}
+
 	var fsize = server.map.fieldSize;
 	
 	var odx = Math.abs(this.aimX- this.posX);
@@ -118,7 +156,7 @@ gameObject.prototype.serachForBonus = function () {
 	}
 
 	var speed = this.speed;
-	if (this.bonusSpeed > 0) {
+	if (this.bonusSpeed > 0 && this.bonusTimer>0) {
 		speed += this.bonusSpeed;
 	//	this.bonusSpeed -= _bonusSpeedScale * server.delta;
 	}	

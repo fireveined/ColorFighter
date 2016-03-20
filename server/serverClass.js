@@ -30,7 +30,7 @@ serverClass.prototype.reset = function () {
 	this.map.reset();
 	this.timeLeft = 65;
 	io.emit("reset", this.timeLeft + "+" + this.objects[best].name);
-	console.log(this.objects[best].name);
+
 }
 
 
@@ -86,8 +86,8 @@ io.on('connection', function (socket) {
 				init += server.objects[a].name + "$";
 				init += server.objects[a].angle + "$";
 			}
+			setTimeout(function () { socket.emit('init', init); }, 500);
 		
-		socket.emit('init', init);
 	});
 		
 
@@ -103,8 +103,7 @@ io.on('connection', function (socket) {
 			player.aimX = msg[0];
 			player.aimY = msg[1];
 			player.angle = msg[2];
-			
-
+	
 			player.checkField(msg[0], msg[1]);
 			socket.broadcast.emit('p', player.id + "+" + msgo);
 		});
@@ -137,9 +136,10 @@ serverClass.prototype.addBonus = function () {
 	var rand = Math.random();
 	
 
-	if (rand > 0.2) bonus = BONUS_SCORE;
-	if (rand > 0.6) bonus = BONUS_SPEED;
-
+	if (rand > 0.1) bonus = BONUS_SCORE;
+	if (rand > 0.5) bonus = BONUS_SPEED;
+	if (rand > 0.7) bonus = BONUS_ARROW;
+	if (rand > 0.86) bonus = BONUS_WIRUS;
 	server.map.fields[x][y].bonus = bonus;
 //	console.log(msg);
 }
@@ -148,6 +148,7 @@ serverClass.prototype.addBonus = function () {
 serverClass.prototype.update = function () {
 	
 	
+
 	this.delta = (new Date().getTime() - this.lastTime) / 1000.0;
 	this.lastTime = new Date().getTime();
 	
@@ -159,8 +160,19 @@ serverClass.prototype.update = function () {
 	}
 	
 	for (var x = 0; x < server.map.fieldsX; x++)
-		for (var y = 0; y < server.map.fieldsY; y++)
+		for (var y = 0; y < server.map.fieldsY; y++) {
 			server.map.fields[x][y].claimed -= this.delta;
+
+			if (server.map.fields[x][y].bonus == BONUS_ARROW) {
+				server.map.fields[x][y].arrowTimer += server.delta;
+				if (server.map.fields[x][y].arrowTimer > _arrowRotationTime) {
+					server.map.fields[x][y].arrowTimer = 0;
+					server.map.fields[x][y].arrowDir = (server.map.fields[x][y].arrowDir + 1) % 4;
+				}
+			}
+
+		}
+	
 
 	if (this.timeLeft == 0)
 		this.reset();
