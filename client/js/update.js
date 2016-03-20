@@ -148,4 +148,21 @@ gameClass.prototype.handleNetwork = function (socket) {
 		}
 		game.map.reset();
 	});
+
+
+	
+	socket.on('hof', function (msg) {
+
+		if (!self.loaded || !self.created) return;
+	
+		msg = msg.split("+");
+	
+		game.hallOfFameWins.setText("");
+		game.hallOfFame.setText("");
+		for (var a = 0; a < msg[0]; a++) {
+			game.hallOfFame.setText(game.hallOfFame.text  + msg[1 + a * 2] + "\n");
+			game.hallOfFameWins.setText(game.hallOfFameWins.text + msg[2 + a * 2] + "\n");
+		}
+	});
+	
 }

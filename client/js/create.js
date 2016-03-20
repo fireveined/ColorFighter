@@ -29,6 +29,9 @@ gameClass.prototype.create = function () {
 	this.waitText.setTextBounds(0, 0, canvasWidth-120, canvasHeight);
 	this.waitText.visible = false;
 	
+	this.hallOfFameLabel = phaser.add.text(hudX+17 , 60 + 80 * 4 + 62, "Hall Of Fame", { fill: "yellow", font: "12px Arial" });
+	this.hallOfFame =  phaser.add.text(hudX , 60 + 80 * 4 + 80, "Adde", { fill: "yellow", font: "11px Arial" });
+	this.hallOfFameWins = phaser.add.text(hudX + 88, 60 + 80 * 4 + 80, "31", { fill: "yellow", font: "11px Arial" });
 
 	this.created = 1;
 
@@ -45,9 +48,9 @@ gameClass.prototype.addPlayer = function (x, y, color, name) {
 	this.map.objects.push(new gameObject(new Phaser.Point(x, y), color));
 	this.map.objects[a].id = a;
 	this.avatars[a] = [];
-	this.avatars[a].avatar = phaser.add.image(hudX , 40 + 80 * a, this.map.objects[a].sprite.generateTexture());
-	this.avatars[a].score = phaser.add.text(hudX + 55, 40 + 80 * a + 20, "32", { fill: "yellow" , fontSize: 28});
-	this.avatars[a].name = phaser.add.text(hudX + 15, 40 + 80 * a + 55, name, { fill: "yellow", fontSize: 17 });
+	this.avatars[a].avatar = phaser.add.image(hudX , 40 + 76 * a, this.map.objects[a].sprite.generateTexture());
+	this.avatars[a].score = phaser.add.text(hudX + 55, 40 + 76 * a + 20, "32", { fill: "yellow" , fontSize: 28});
+	this.avatars[a].name = phaser.add.text(hudX + 15, 40 + 76 * a + 55, name, { fill: "yellow", fontSize: 14 });
 	
 
 }

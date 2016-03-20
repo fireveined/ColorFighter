@@ -65,6 +65,8 @@ function shortToId(s) {
 		if (num > 40) life = 1500;
 		this.particles[id].start(true, time, null, num);
 	}
+
+
 //this.manageInput = function () { console.log("ff");}
 }
 

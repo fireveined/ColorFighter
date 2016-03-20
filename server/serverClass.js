@@ -4,6 +4,11 @@ eval(fs.readFileSync('client/shared/const.js') + '');
 eval(fs.readFileSync('server/gameObject.js') + '');
 eval(fs.readFileSync('client/shared/map.js') + '');
 
+CWinner = function (name, wins) {
+
+	this.name = name;
+	this.wins = wins;
+}
 
 serverClass = function () {
 	
@@ -15,22 +20,67 @@ serverClass = function () {
 	this.timeLeft = 59;
 	this.matchTime = 59;
 	this.numPlayers = 5;
+	
+	this.hallOfFame = [];
 
 }
 
+serverClass.prototype.sendHallOfFame = function () {
+	
+	var msg = "" + this.hallOfFame.length;
+	
+	
+	this.hallOfFame.sort(function (a, b) {
+		return parseInt(b.wins) - parseInt(a.wins);
+	});
+	
+
+	for (var a = 0; a < this.hallOfFame.length; a++) {
+		msg+= "+" + this.hallOfFame[a].name + "+" + this.hallOfFame[a].wins;
+	}
+	console.log(msg);
+	io.emit("hof", msg);
+
+}
+
+serverClass.prototype.addToHOF = function (name, win) {
+
+	var added = 0;
+	for (var a = 0; a < this.hallOfFame.length; a++)
+		if (this.hallOfFame[a].name.toLowerCase() == name.toLowerCase()) {
+			added = 1;
+			this.hallOfFame[a].wins+=win;
+		}
+	if (!added)
+		this.hallOfFame.push(new CWinner(name, win));
+
+}
 
 serverClass.prototype.reset = function () {
 	
-	var best = 0;
+	var best = 0, second = 0, third = 0, forth = 0;
+	var scores = [];
 	for (var a = 0; a < this.numPlayers; a++)
-		if (this.objects[a].score > this.objects[best].score) best = a; 
+		scores.push([this.objects[a].name, this.objects[a].score, this.objects[a].ai]);
+	
+scores.sort(function (a, b) {
+	return parseInt(a[1]) - parseInt(b[1]);
+});
+
+
+	for (var a = 0; a < this.numPlayers; a++) {
+		if (scores[a][2] == false) this.addToHOF(scores[a][0], a);
+		console.log(scores[a][1]+" ");
+	}
+
 	for (var a = 0; a < this.numPlayers; a++) {
 		this.objects[a].score = 0;
 	}
 	this.map.reset();
 	this.timeLeft = 65;
-	io.emit("reset", this.timeLeft + "+" + this.objects[best].name);
-
+	
+	io.emit("reset", this.timeLeft + "+" + scores[4][0]);
+	this.sendHallOfFame();
 }
 
 
@@ -63,8 +113,10 @@ io.on('connection', function (socket) {
 	var player=0;
 	
 	
-	socket.on('join', function (msg) {
+		socket.on('join', function (msg) {
+
 		
+
 		for (var a = 0; a < server.objects.length; a++)
 				if (server.objects[a].ai) {
 					
@@ -86,7 +138,7 @@ io.on('connection', function (socket) {
 				init += server.objects[a].name + "$";
 				init += server.objects[a].angle + "$";
 			}
-			setTimeout(function () { socket.emit('init', init); }, 500);
+			setTimeout(function () { socket.emit('init', init); server.sendHallOfFame();}, 500);
 		
 	});
 		
@@ -94,6 +146,7 @@ io.on('connection', function (socket) {
 		socket.on('disconnect', function () {
 			if (player === 0) return;
 			server.objects[player.id].ai = 1;
+			server.objects[player.id].name = "Bot";
 			console.log(player.name + " disconeccted");
 		});
 

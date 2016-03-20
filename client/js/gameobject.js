@@ -47,8 +47,8 @@ function gameObject(position, color) {
 	this.sprite.anchor.x = 0.5;
 	this.sprite.anchor.y = 0.5;
 	
-	this.counter = phaser.add.text(25, 30, "", { fill: "yellow", fontSize: 20});
-	this.counter.setShadow(5, 5, 'rgba(0,0,0,0.8)', 2);
+	this.counter = phaser.add.text(25, 30, "", { fill: "yellow", fontSize: 24});
+	this.counter.setShadow(5, 5, 'rgba(0,0,0,0.6)', 2);
 	this.cooldowns = [[1, 1], [1, 1], [1, 1]];
 	
 	this.health = [45, 60];
@@ -116,7 +116,7 @@ gameObject.prototype.update = function () {
 	
 	var fsize = game.map.fieldSize;
 	
-	var o = 8;
+	var o = 12;
 	if (this.ai) o = 19;
 	if (this.pos.length > 5) this.pos.splice(0, this.pos.length-5);
 	if (this.pos.length > 2) o = 19;
