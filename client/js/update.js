@@ -85,7 +85,6 @@ gameClass.prototype.handleNetwork = function (socket) {
 
 	socket.on('p', function (msg) {
 		if (!self.loaded) return;		
-		console.log(msg);
 		msg = msg.split("+");
 		self.map.objects[msg[0]].pos.push(new CState(msg[1], msg[2], msg[3]));
 	});
@@ -93,7 +92,6 @@ gameClass.prototype.handleNetwork = function (socket) {
 
 	socket.on('state', function (msg) {
 		if (!self.loaded || !self.created ) return;	
-		console.log(msg);
 		var i = 0;
 		msg = msg.split("");		
 		for (var x = 0; x < game.map.fieldsX; x++)

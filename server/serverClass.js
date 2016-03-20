@@ -29,16 +29,16 @@ serverClass.prototype.sendHallOfFame = function () {
 	
 	var msg = "" + this.hallOfFame.length;
 	
-	
 	this.hallOfFame.sort(function (a, b) {
 		return parseInt(b.wins) - parseInt(a.wins);
 	});
-	
 
 	for (var a = 0; a < this.hallOfFame.length; a++) {
 		msg+= "+" + this.hallOfFame[a].name + "+" + this.hallOfFame[a].wins;
 	}
-	console.log(msg);
+	
+	fs.writeFile("hof.txt", msg, function (err) { if(err)console.log("Can't save HoF file! Error: "+ err);});
+
 	io.emit("hof", msg);
 
 }
@@ -49,7 +49,7 @@ serverClass.prototype.addToHOF = function (name, win) {
 	for (var a = 0; a < this.hallOfFame.length; a++)
 		if (this.hallOfFame[a].name.toLowerCase() == name.toLowerCase()) {
 			added = 1;
-			this.hallOfFame[a].wins+=win;
+			this.hallOfFame[a].wins+=parseInt(win);
 		}
 	if (!added)
 		this.hallOfFame.push(new CWinner(name, win));
@@ -68,10 +68,9 @@ scores.sort(function (a, b) {
 });
 
 
-	for (var a = 0; a < this.numPlayers; a++) {
-		if (scores[a][2] == false) this.addToHOF(scores[a][0], a);
-		console.log(scores[a][1]+" ");
-	}
+	for (var a = 0; a < this.numPlayers; a++) 
+		if (scores[a][2] == false) this.addToHOF(scores[a][0], a+1);
+	
 
 	for (var a = 0; a < this.numPlayers; a++) {
 		this.objects[a].score = 0;
@@ -107,6 +106,13 @@ serverClass.prototype.run = function () {
 	setInterval(this.sendState, 40);
 	setInterval(function () { server.timeLeft--; }, 1000);
 	setInterval(this.addBonus, 400);
+	
+	
+	var hof = fs.readFileSync('hof.txt')+'';
+	hof = hof.split("+");
+	for (var a = 0; a < hof[0]; a++) {
+		this.hallOfFame.push(new CWinner(hof[1+a*2], parseInt(hof[2+a*2])));
+	}
 
 io.on('connection', function (socket) {
 	
