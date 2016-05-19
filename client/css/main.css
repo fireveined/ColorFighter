@@ -26,11 +26,16 @@ canvas {
 	box-sizing: border-box;
 }
 
-#startMenu p {
+#startMenu .gameTitle {
 	padding: 0;
 	text-align:center;
 	font-size: x-large;
 	font-weight: bold;
+}
+
+#startMenu .gameDescribe {
+	padding: 5;
+	text-align:center;
 }
 
 #playerNameInput {
