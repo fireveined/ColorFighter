@@ -1,19 +1,15 @@
 {
-  "name": "OpenShift-Sample-App",
-  "version": "1.0.0",
-  "description": "OpenShift Sample Application",
+  "name": "ColorFighter",
+  "version": "0.1.0",
+  "description": "Simple realtime multiplayer game",
   "keywords": [
-    "OpenShift",
     "Node.js",
-    "application",
-    "openshift"
+	"phaser.js"
+
   ],
   "author": {
-    "name": "OpenShift",
-    "email": "ramr@example.org",
-    "url": "http://www.openshift.com/"
+    "name": "Fireveined",
   },
-  "homepage": "http://www.openshift.com/",
   "repository": {
     "type": "git",
     "url": "https://github.com/openshift/origin-server"
@@ -23,8 +19,6 @@
     "express": "~3.4.4",
     "socket.io": "^1.4.5"
   },
-  "devDependencies": {},
-  "bundleDependencies": [],
-  "private": true,
+
   "main": "server.js"
 }
