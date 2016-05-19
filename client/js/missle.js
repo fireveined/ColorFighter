@@ -1,5 +1,3 @@
-
-
 function missle(position, angle, sprite) {
 	var self = this;
 	this.position = position;
@@ -15,18 +13,11 @@ function missle(position, angle, sprite) {
 }
 
 
-
-
 missle.prototype.update = function () {
-	
 	this.diry += 0.14;
 	this.position.x += this.dirx;
 	this.position.y += this.diry;
-	
-
 	this.sprite.rotation = this.angle;
-
 	this.sprite.x = this.position.x;
 	this.sprite.y = this.position.y;
 };
-
